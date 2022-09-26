@@ -11,4 +11,11 @@ router.get('/', function(req, res, next) {
   })
 });
 
+router.get('/login', (req, res) => {
+  res.render('user/login', { title: 'Shopping Cart | Login' })
+})
+router.get('/signup', (req, res) => {
+  res.render('user/signup', { title: 'Shopping Cart | Sign Up' })
+})
+
 module.exports = router;
