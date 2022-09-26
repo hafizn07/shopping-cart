@@ -5,14 +5,15 @@
       <div class="col-md-3">
         <div class="card" style="width: 18rem;">
           <img
-            src="{{this.image}}"
+            src="/product-images/{{this._id}}.jpg"
             class="card-img-top"
             alt="..."
           />
           <div class="card-body">
-            <h5 class="card-title">{{this.name}}</h5>
-            <p class="card-text">{{this.description}}</p>
-            <a href="#" class="btn btn-primary">Add to Cart</a>
+            <h5 class="card-title">{{this.Name}}</h5>
+            <p class="card-text">{{this.Description}}</p>
+            <h6 class="card-text">INR: {{this.Price}}</h6>
+            <a href="#" class="btn btn-primary mt-2">Add to Cart</a>
           </div>
         </div>
       </div>
