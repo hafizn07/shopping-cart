@@ -13,17 +13,14 @@ router.get('/', function(req, res, next) {
   })
 });
 
+/* LogIn Functionality. */
 router.get('/login', (req, res) => {
-  res.render('user/login', { title: 'Shopping Cart | Login' })
-})
-router.get('/signup', (req, res) => {
-  res.render('user/signup', { title: 'Shopping Cart | Sign Up' })
-})
-router.post('/signup', (req, res) => {
-  userHelper.doSignUp(req.body)
-  .then((response) => {
-    console.log(response);
-  })
+  if(req.session.loggedIn){
+    res.redirect('/')
+  }else{
+    res.render('user/login', { title: 'Shopping Cart | Login', "loginErr": req.session.loginErr })
+    req.session.loginErr = false
+  }
 })
 
 router.post('/login', (req, res) => {
@@ -34,11 +31,27 @@ router.post('/login', (req, res) => {
       req.session.user = response.user
       res.redirect('/')
     }else{
+      req.session.loginErr = true
       res.redirect('/login')
     }
   });
 })
 
+
+/* SignUp Functionality. */
+router.get('/signup', (req, res) => {
+  res.render('user/signup', { title: 'Shopping Cart | Sign Up' })
+})
+
+router.post('/signup', (req, res) => {
+  userHelper.doSignUp(req.body)
+  .then((response) => {
+    console.log(response);
+  })
+})
+
+
+/* LogOut Functionality. */
 router.get('/logout', (req, res) => {
   req.session.destroy()
   res.redirect('/')

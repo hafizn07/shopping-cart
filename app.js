@@ -27,6 +27,11 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(fileUpload())
 app.use(session({ secret:"key", cookie:{maxAge:600000} }))
 
+app.use(function(req, res, next) { 
+  res.header('Cache-Control', 'no-cache, private, no-store, must-revalidate, max-stale=0, post-check=0, pre-check=0'); 
+  next(); 
+});
+
 //DB connection
 db.connect((err) => {
   if (err) console.log("Connection error!!" + err);
