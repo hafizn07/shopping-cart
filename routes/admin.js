@@ -1,14 +1,15 @@
 var express = require('express');
 var router = express.Router();
-var productHelper = require('../helpers/product-helpers')
+const fs = require('fs')
+var productHelpers = require('../helpers/product-helpers')
 
 /* GET users listing. */
 router.get('/', function (req, res, next) {
 
-  productHelper.getAllProducts()
-  .then((products) => {
-    res.render('admin/view-products', {title: 'Shopping Cart | Admin', admin: true, products })
-  })
+  productHelpers.getAllProducts()
+    .then((products) => {
+      res.render('admin/view-products', { title: 'Shopping Cart | Admin', admin: true, products })
+    })
 
 });
 
@@ -18,9 +19,9 @@ router.get('/add-product', (req, res) => {
 
 router.post('/add-product', (req, res) => {
 
-  productHelper.addProduct(req.body, (id) => {
+  productHelpers.addProduct(req.body, (id) => {
     image = req.files.Image
-    image.mv('./public/product-images/' + id + '.jpg', (err, done) => {
+    image.mv('./public/images/product-images/' + id + '.jpg', (err, done) => {
       if (!err) {
         res.render('admin/add-product')
       } else {
@@ -28,6 +29,22 @@ router.post('/add-product', (req, res) => {
       }
     })
   })
+})
+
+router.get('/delete-product/:id', (req, res) => {
+  let productId = req.params.id
+  productHelpers.deleteProduct(productId).then((response) => {
+    res.redirect('/admin')
+  })
+  
+  const path = './public/images/product-images/' + productId + '.jpg'
+
+  try {
+    fs.unlinkSync(path)
+    console.log("Deleted")
+  } catch (err) {
+    console.error(err)
+  }
 })
 
 module.exports = router;
