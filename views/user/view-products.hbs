@@ -10,7 +10,8 @@
                         <h5 class="card-title">{{this.Name}}</h5>
                         <p class="card-text" style="font-size: 14px;">{{this.Description}}</p>
                         <p class="card-text" style="font-weight: bold;">INR: {{this.Price}}</p>
-                        <a href="/add-to-cart/{{this._id}}" class="btn btn-primary mt-1">Add to Cart</a>
+                        <button onclick="addToCart('{{this._id}}')" class="btn btn-primary">Add to cart</button>
+                        {{!-- <a href="/add-to-cart/{{this._id}}" class="btn btn-primary mt-1">Add to Cart</a> --}}
                     </div>
                 </div>
             </div>
@@ -19,3 +20,7 @@
     </div>
     </div>
 </section>
+
+<script>
+    
+</script>

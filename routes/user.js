@@ -20,7 +20,7 @@ router.get('/', async function (req, res, next) {
   if (req.session.user) {
     cartCount = await userHelper.getCartCount(req.session.user._id)
   }
-  
+
   productHelper.getAllProducts()
     .then((products) => {
       res.render('user/view-products', { title: 'Shopping Cart', products, user, cartCount, admin: false })
@@ -81,10 +81,11 @@ router.get('/cart', verifyLogin, async (req, res) => {
   res.render('user/cart', { title: 'Your cart', products, user: req.session.user })
 })
 
-router.get('/add-to-cart/:id', verifyLogin, (req, res) => {
+router.get('/add-to-cart/:id', (req, res) => {
+  console.log('api call');
   userHelper.addToCart(req.params.id, req.session.user._id)
     .then(() => {
-      res.redirect('/')
+      res.json({status: true})
     });
 })
 
