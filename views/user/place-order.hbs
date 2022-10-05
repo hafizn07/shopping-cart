@@ -15,23 +15,23 @@
                     </div>
                 </div>
                 <div class="col-md-4">
-                    <div class="container mt-5 ml-5 checkout" >
-                    <h5>Total Amount : ₹ {{total}}</h5>
-                    <hr>
-                    <div class="payment">
-                        <p>Payment method</p>
-                        <label class="radio-inline">
-                            <input type="radio" name="payment-method" value="COD" checked>COD
-                        </label>
-                        <label class="radio-inline mt-2">
-                            <input type="radio" name="payment-method" value="ONLINE"> Online payment
-                        </label>
-                        <button class="btn btn-primary float-right" type="submit">Checkout</button>
+                    <div class="container mt-5 ml-5 checkout">
+                        <h5>Total Amount : ₹ {{total}}</h5>
+                        <hr>
+                        <div class="payment">
+                            <p>Payment method</p>
+                            <label class="radio-inline">
+                                <input type="radio" name="payment-method" value="COD" checked>COD
+                            </label>
+                            <label class="radio-inline mt-2">
+                                <input type="radio" name="payment-method" value="ONLINE"> Online payment
+                            </label>
+                            <button class="btn btn-primary float-right" type="submit">Checkout</button>
+                        </div>
                     </div>
                 </div>
             </div>
-    </div>
-    </form>
+        </form>
     </div>
 </section>
 
@@ -45,16 +45,61 @@
             data: $('#checkout-form').serialize(),
             success: (response) => {
                 alert(response)
-                if(response.status){
-<<<<<<< HEAD
-                    location.href= ''
-=======
-                    location.href= '/order-success'
->>>>>>> 43c143e (Total Price of Cart Product)
+                if (response.codSuccess) {
+                    location.href = '/order-success'
+                } else {
+                    razorpayPayment(response)
                 }
             }
         })
     })
+    function razorpayPayment(order) {
+        var options = {
+            "key": "rzp_test_TZqvaiKvAAG2a2", // Enter the Key ID generated from the Dashboard
+            "amount": order.amount, // Amount is in currency subunits. Default currency is INR. Hence, 50000 refers to 50000 paise
+            "currency": "INR",
+            "name": "CodeKofy",
+            "description": "Test Transaction",
+            "image": "https://example.com/your_logo",
+            "order_id": order.id, //This is a sample Order ID. Pass the `id` obtained in the response of Step 1
+            "handler": function (response) {
+
+                verifyPayment(response, order)
+            },
+
+            "prefill": {
+                "name": "Gaurav Kumar",
+                "email": "gaurav.kumar@example.com",
+                "contact": "9999999999"
+            },
+            "notes": {
+                "address": "Razorpay Corporate Office"
+            },
+            "theme": {
+                "color": "#3399cc"
+            }
+        };
+        var rzp1 = new Razorpay(options);
+        rzp1.open();
+    }
+
+    function verifyPayment(payment, order){
+        $.ajax({
+            url: '/verify-payment',
+            data: {
+                payment,
+                order
+            },
+            method: 'post',
+            success: (response) => {
+                if (response.status){
+                    location.href = '/order-success'
+                }else{
+                    alert('Payment failed')
+                }
+            }
+        })
+    }
 </script>
 
 
