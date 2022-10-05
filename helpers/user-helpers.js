@@ -135,9 +135,9 @@ module.exports = {
         return new Promise((resolve, reject) => {
             if (count == -1 && quantity == 1) {
                 db.get().collection(collection.CART_COLLECTION)
-                    .updateOne({ _id:objectId(details.cart)},
+                    .updateOne({ _id: objectId(details.cart) },
                         {
-                            $pull: { products:{item:objectId(details.product)} }
+                            $pull: { products: { item: objectId(details.product) } }
                         }
                     ).then((response) => {
                         resolve({ removeProduct: true })
@@ -149,7 +149,11 @@ module.exports = {
                             $inc: { 'products.$.quantity': count }
                         }
                     ).then(() => {
+<<<<<<< HEAD
                         resolve({status: true});
+=======
+                        resolve({ status: true });
+>>>>>>> 43c143e (Total Price of Cart Product)
                     })
             }
 
@@ -191,7 +195,7 @@ module.exports = {
                 {
                     $group: {
                         _id: null,
-                        total: {$sum: {$multiply: ['$quantity', {$toInt: '$product.Price'}]}}
+                        total: { $sum: { $multiply: ['$quantity', { $toInt: '$product.Price' }] } }
                     }
                 }
 
@@ -203,7 +207,11 @@ module.exports = {
     placeOrder: (order, products, total) => {
         return new Promise((resolve, reject) => {
             console.log(order, products, total);
+<<<<<<< HEAD
             let status = order['payment-method']==='COD'?'placed':'pending'
+=======
+            let status = order['payment-method'] === 'COD' ? 'placed' : 'pending'
+>>>>>>> 43c143e (Total Price of Cart Product)
             let orderObj = {
                 deliveryDetails: {
                     mobile: order.mobile,
@@ -218,17 +226,74 @@ module.exports = {
                 date: new Date()
             }
 
+<<<<<<< HEAD
             db.get().collection(collection.ORDER_COLLECTION).insertOne(orderObj).then((response)=>{
                 db.get().collection(collection.CART_COLLECTION).deleteOne({user:objectId(order.userId)})
+=======
+            db.get().collection(collection.ORDER_COLLECTION).insertOne(orderObj).then((response) => {
+                db.get().collection(collection.CART_COLLECTION).deleteOne({ user: objectId(order.userId) })
+>>>>>>> 43c143e (Total Price of Cart Product)
                 resolve()
             })
         })
     },
 
     getCartProductList: (userId) => {
+<<<<<<< HEAD
         return new Promise( async(resolve, reject) => {
             let cart = await db.get().collection(collection.CART_COLLECTION).findOne({user:objectId(userId)})
             resolve(cart.products)
         })
     }
+=======
+        return new Promise(async (resolve, reject) => {
+            let cart = await db.get().collection(collection.CART_COLLECTION).findOne({ user: objectId(userId) })
+            resolve(cart.products)
+        })
+    },
+
+    getUserOrders: (userId) => {
+        return new Promise(async (resolve, reject) => {
+            console.log(userId);
+            let orders = await db.get().collection(collection.ORDER_COLLECTION)
+                .find({ userId: objectId(userId) }).toArray()
+            console.log(orders);
+            resolve(orders)
+        })
+    },
+
+    getOrderProducts: (orderId) => {
+        return new Promise(async (resolve, reject) => {
+            let orderItems = await db.get().collection(collection.ORDER_COLLECTION).aggregate([
+                {
+                    $match: { _id: objectId(orderId) }
+                },
+                {
+                    $unwind: '$products'
+                },
+                {
+                    $project: {
+                        item: '$products.item',
+                        quantity: '$products.quantity'
+                    }
+                },
+                {
+                    $lookup: {
+                        from: collection.PRODUCT_COLLECTION,
+                        localField: 'item',
+                        foreignField: '_id',
+                        as: 'product'
+                    }
+                },
+                {
+                    $project: {
+                        item: 1, quantity: 1, product: { $arrayElemAt: ['$product', 0] }
+                    }
+                }
+            ]).toArray()
+            console.log(orderItems)
+            resolve(orderItems)
+        })
+    },
+>>>>>>> 43c143e (Total Price of Cart Product)
 }
