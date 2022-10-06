@@ -5,7 +5,7 @@ var userHelper = require("../helpers/user-helpers");
 
 /* Created a middleware to check whether a user logged In or not */
 const verifyLogin = (req, res, next) => {
-  if (req.session.loggedIn) {
+  if (req.session.user.loggedIn) {
     next();
   } else {
     res.redirect("/login");
@@ -34,25 +34,25 @@ router.get("/", async function (req, res, next) {
 
 /* LogIn Functionality. */
 router.get("/login", (req, res) => {
-  if (req.session.loggedIn) {
+  if (req.session.user) {
     res.redirect("/");
   } else {
     res.render("user/login", {
       title: "Shopping Cart | Login",
-      loginErr: req.session.loginErr,
+      loginErr: req.session.userLoginErr,
     });
-    req.session.loginErr = false;
+    req.session.userLoginErr = false;
   }
 });
 
 router.post("/login", (req, res) => {
   userHelper.doLogin(req.body).then((response) => {
     if (response.status) {
-      req.session.loggedIn = true;
       req.session.user = response.user;
+      req.session.user.loggedIn = true;
       res.redirect("/");
     } else {
-      req.session.loginErr = true;
+      req.session.userLoginErr = true;
       res.redirect("/login");
     }
   });
@@ -66,15 +66,15 @@ router.get("/signup", (req, res) => {
 router.post("/signup", (req, res) => {
   userHelper.doSignUp(req.body).then((response) => {
     console.log(response);
-    req.session.loggedIn = true;
     req.session.user = response;
+    req.session.user.loggedIn = true;
     res.redirect("/");
   });
 });
 
 /* LogOut Functionality. */
 router.get("/logout", (req, res) => {
-  req.session.destroy();
+  req.session.user = null
   res.redirect("/");
 });
 
