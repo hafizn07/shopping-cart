@@ -5,7 +5,7 @@ var userHelper = require("../helpers/user-helpers");
 
 /* Created a middleware to check whether a user logged In or not */
 const verifyLogin = (req, res, next) => {
-  if (req.session.user.loggedIn) {
+  if (req.session.userLoggedIn) {
     next();
   } else {
     res.redirect("/login");
@@ -75,6 +75,7 @@ router.post("/signup", (req, res) => {
 /* LogOut Functionality. */
 router.get("/logout", (req, res) => {
   req.session.user = null
+  req.session.userLoggedIn = false
   res.redirect("/");
 });
 
